@@ -731,6 +731,11 @@
     padding-block: var(--s-9);
     background: var(--c-ink);
     color: var(--c-bg);
+    /* This is the one dark band in an otherwise light page. The global amethyst
+       focus ring scores only 1.7:1 against --c-ink, so a keyboard user tabbing
+       to the final CTA would see no indicator at all. Re-theme the ring for
+       this scope: sand on ink is 13.5:1. (WCAG 2.4.11 / 1.4.11) */
+    --a11y-focus-color: #f7f4ef;
   }
 
   .final .label { color: #d9c2ea; }   /* 9.1:1 on --c-ink */
