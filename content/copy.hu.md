@@ -176,8 +176,14 @@ leírásban és a képek alt szövegében, nem a törzsszöveg erőltetett átí
 **Lista**
 - **Csakraállítás** — csoportos állítások vezetése
 - **Családállítás**
+- **Szellemgyógyászat**
 - **Védikus asztrológia**
 - **Tanító, fejlesztőpedagógus** — 40 év a gyerekek között
+
+> **Forrás-megjegyzés:** a szellemgyógyászat nem szerepel Éva bemutatkozó szövegében
+> (ott „csakraállító, családállító, … védikus asztrológia" áll, három ponttal). A
+> megbízó megerősítette, hogy ez is a szolgáltatásai közé tartozik. Ha Éva máshogy
+> nevezi vagy nem szeretné itt szerepeltetni, egyetlen sor törlése.
 
 **Kép helye:** portré, álló 3:4
 **Alt szöveg:** `Blaskó Éva`
@@ -274,7 +280,7 @@ leírásban és a képek alt szövegében, nem a törzsszöveg erőltetett átí
 > Impresszum · Adatkezelési tájékoztató
 
 **Jogi nyilatkozat (minden oldal alján, jól olvashatóan)**
-> A csakraállítás és a családállítás nem egészségügyi szolgáltatás. Nem minősül gyógyításnak, nem helyettesíti az orvosi vizsgálatot, diagnózist vagy kezelést, és nem alkalmas betegség megelőzésére vagy megszüntetésére. Egészségügyi panasz esetén kérlek, fordulj orvoshoz. Folyamatban lévő orvosi kezelést semmilyen esetben ne szakíts meg.
+> A csakraállítás, a családállítás és a szellemgyógyászat nem egészségügyi szolgáltatás. Nem minősül gyógyításnak, nem helyettesíti az orvosi vizsgálatot, diagnózist vagy kezelést, és nem alkalmas betegség megelőzésére vagy megszüntetésére. Egészségügyi panasz esetén kérlek, fordulj orvoshoz. Folyamatban lévő orvosi kezelést semmilyen esetben ne szakíts meg.
 
 **Copyright**
 > © 2026 Blaskó Éva. Minden jog fenntartva.
