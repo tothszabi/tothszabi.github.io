@@ -9,17 +9,12 @@
   /* Measured height of the sticky header at each breakpoint. Sticky offsets and
      anchor-jump scroll padding derive from it, so nothing comes to rest behind
      the header. Re-measure if the header contents change. */
+  /* Since the mobile menu became an absolutely-positioned panel, the header is
+     a single row at EVERY width — measured 69px from 320px to 1920px, and
+     unchanged whether the menu is open or closed. One value, no tiers. */
   :root {
-    --header-h: 173px;   /* ≤384px: brand wraps to its own row */
+    --header-h: 69px;
     --header-gap: 1.5rem;
-  }
-
-  @media (min-width: 24rem) {
-    :root { --header-h: 125px; }  /* brand + call button, then the nav row */
-  }
-
-  @media (min-width: 54rem) {
-    :root { --header-h: 69px; }   /* single row */
   }
 
   /* Overrides reset.css's generic 5rem, which was shorter than the header on
@@ -186,26 +181,159 @@
     background: var(--c-primary-wash);
   }
 
-  /* On phones the header would otherwise stack into three rows and, being
-     sticky, eat a third of the viewport. Brand + call button share row one;
-     the section nav becomes one horizontally scrollable row. Nothing is
-     hidden, so mobile and desktop keep full content parity. */
-  @media (max-width: 47.99rem) {
-    .nav {
-      order: 3;
-      flex: 1 1 100%;
-      overflow-x: auto;
-      overscroll-behavior-x: contain;
-      scrollbar-width: none;
+  /* ---- Mobile menu ----------------------------------------------------
+     A real <button aria-expanded> drives the panel; ~20 lines of inline JS at
+     the end of the document flip the attribute and close the panel on link tap,
+     Escape and outside click. CSS keys off [aria-expanded="true"] only, so the
+     button's state and the panel's visibility cannot drift apart.
+
+     The panel is absolutely positioned, so the sticky header keeps a constant
+     one-row height whether the menu is open or closed — which is what makes
+     --header-h a single stable value instead of the old multi-tier guess. */
+  .nav-btn { display: none; }
+
+  /* No-JS fallback. The toggle cannot work without the script above, so rather
+     than a panel that never opens, show the nav as a plain wrapping row — the
+     pre-hamburger layout. Header grows a row or two; every link stays reachable. */
+  :root:not(.js) .nav-btn { display: none; }
+
+  :root:not(.js) .nav {
+    position: static;
+    display: block;
+    padding: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+  }
+
+  :root:not(.js) .nav__list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+
+  :root:not(.js) .nav__list li + li { border-top: 0; }
+
+  /* Rows are only full-bleed inside the panel. */
+  :root:not(.js) .nav__link { padding-inline: var(--s-2); }
+
+  /* Progressive trimming so the header stays ONE row on every real phone.
+     Each step removes only decoration; every fact is restated in the hero or
+     the footer, and the Menü control keeps its accessible name throughout. */
+  @media (max-width: 34rem) {
+    .brand__role { display: none; }          /* subtitle: also in hero + footer */
+  }
+
+  @media (max-width: 26rem) {
+    .site-header__inner { gap: var(--s-2) var(--s-3); }
+    .nav-btn { padding-inline: 0.7rem; gap: var(--s-2); }
+    .brand__mark { display: none; }           /* decorative logogram */
+  }
+
+  @media (max-width: 22rem) {
+    /* Icon-only Menü. visually-hidden, NOT display:none, so the label keeps
+       its accessible name for screen readers. */
+    .nav-btn__label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .nav-btn { gap: 0; }
+  }
+
+  @media (max-width: 53.99rem) {
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s-3);
+      min-height: 44px;
+      padding: 0.4rem 0.95rem;
+      background: var(--c-surface);
+      border: 1px solid var(--c-line-strong);
+      border-radius: var(--r-pill);
+      color: var(--c-ink);
+      font-size: var(--t-sm);
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
     }
 
-    .nav::-webkit-scrollbar { display: none; }
 
-    .nav__list { flex-wrap: nowrap; }
+    /* Three bars that become an X when open. */
+    .nav-btn__bars,
+    .nav-btn__bars::before,
+    .nav-btn__bars::after {
+      display: block;
+      width: 1.125rem;
+      height: 2px;
+      background: currentColor;
+      border-radius: 2px;
+      transition: transform 180ms ease, opacity 120ms ease;
+    }
 
-    .nav__link { white-space: nowrap; }
+    .nav-btn__bars { position: relative; }
 
-    .site-header__inner > .btn { order: 2; }
+    .nav-btn__bars::before,
+    .nav-btn__bars::after {
+      content: "";
+      position: absolute;
+      left: 0;
+    }
+
+    .nav-btn__bars::before { top: -6px; }
+    .nav-btn__bars::after  { top: 6px; }
+
+    .nav-btn[aria-expanded="true"] .nav-btn__bars { background: transparent; }
+    .nav-btn[aria-expanded="true"] .nav-btn__bars::before { transform: translateY(6px) rotate(45deg); }
+    .nav-btn[aria-expanded="true"] .nav-btn__bars::after  { transform: translateY(-6px) rotate(-45deg); }
+
+    .nav {
+      position: absolute;
+      inset-inline: 0;
+      top: 100%;
+      display: none;
+      /* No side padding: the rows carry it instead, so each link's tap area and
+         hover fill reach both edges of the panel. */
+      padding: var(--s-2) 0 var(--s-4);
+      background: var(--c-surface);
+      border-bottom: 1px solid var(--c-line);
+      box-shadow: var(--shadow-md);
+    }
+
+    .nav-btn[aria-expanded="true"] + .nav {
+      display: block;
+      /* Never let the panel run past a short viewport. */
+      max-height: calc(100dvh - var(--header-h));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .nav__list {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .nav__list li + li { border-top: 1px solid var(--c-line); }
+
+    /* Full-bleed rows: the whole strip is the tap target, not just the words.
+       `display: flex` (not the inherited inline-flex) is what makes the link
+       fill its <li>; the gutter padding carries the panel's inset. */
+    .nav__link {
+      display: flex;
+      justify-content: flex-start;
+      padding: var(--s-3) var(--gutter);
+      font-size: var(--t-md);
+      border-radius: 0;
+    }
+
+    /* The panel is a scroll container, so an outset focus ring loses its left
+       and right sides at the panel's edges. Draw it inside the row instead. */
+    .nav__link:focus-visible { outline-offset: calc(var(--a11y-focus-offset) * -1); }
   }
 
   /* ---- Buttons --------------------------------------------------------- */

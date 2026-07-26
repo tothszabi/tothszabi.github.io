@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="../../styles/a11y.css">
 <link rel="stylesheet" href="styles/tokens.css">
 <link rel="stylesheet" href="styles/main.css">
+<script>document.documentElement.classList.add("js");</script>
 </head>
 <body id="top">
 
@@ -35,7 +36,12 @@
       </span>
     </a>
 
-    <nav class="nav" aria-label="Fő navigáció">
+    <button class="nav-btn" type="button" aria-expanded="false" aria-controls="site-nav">
+      <span class="nav-btn__bars" aria-hidden="true"></span>
+      <span class="nav-btn__label">Menü</span>
+    </button>
+
+    <nav class="nav" id="site-nav" aria-label="Fő navigáció">
       <ul class="nav__list">
         <li><a class="nav__link" href="#mi-ez">Mi ez?</a></li>
         <li><a class="nav__link" href="#hogyan-zajlik">Hogyan?</a></li>
@@ -549,5 +555,39 @@
   </div>
 </footer>
 
+
+<!-- Mobile menu. Progressive enhancement: without this script the .js class is
+     never set, the toggle stays hidden and the nav renders as a plain row. -->
+<script>
+(function () {
+  var btn = document.querySelector(".nav-btn");
+  var nav = document.getElementById("site-nav");
+  var header = document.querySelector(".site-header");
+  if (!btn || !nav || !header) return;
+
+  var isOpen = function () { return btn.getAttribute("aria-expanded") === "true"; };
+  var setOpen = function (open) { btn.setAttribute("aria-expanded", open ? "true" : "false"); };
+
+  btn.addEventListener("click", function () { setOpen(!isOpen()); });
+
+  /* Close on link tap: the panel covers the very section it just scrolled to. */
+  nav.addEventListener("click", function (e) {
+    if (e.target.closest && e.target.closest("a")) setOpen(false);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && isOpen()) { setOpen(false); btn.focus(); }
+  });
+
+  document.addEventListener("click", function (e) {
+    if (isOpen() && e.target.closest && !e.target.closest(".site-header")) setOpen(false);
+  });
+
+  /* Leaving the mobile layout hides the panel in CSS; keep ARIA in step. */
+  window.matchMedia("(min-width: 54rem)").addEventListener("change", function (e) {
+    if (e.matches) setOpen(false);
+  });
+})();
+</script>
 </body>
 </html>

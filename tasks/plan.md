@@ -16,7 +16,7 @@ hardened for accessibility, SEO, and performance — the other two are deleted.
 | Decision | Choice | Rationale |
 |---|---|---|
 | Language | Hungarian only | Audience searches in Hungarian; avoids hreflang/2× content cost |
-| Stack | Pure HTML + CSS | No deps, no build, cleanest path to 100/100 Lighthouse |
+| Stack | Hand-written HTML + CSS | No deps, no build, cleanest path to 100/100 Lighthouse. One ~600-byte inline script for the mobile menu (see below); nothing else. |
 | Primary CTA | Direct contact links | No backend, no form spam, no GDPR data processing |
 | Content | Placeholder copy, written by us | Client has nothing yet; real copy swaps in later |
 | Service area | Hajdúsámson, Debrecen + környéke | Local SEO targets East Hungary, not national |
@@ -64,6 +64,62 @@ magic/
   adatkezelesi-tajekoztato.html # stub now → real content at Task 10
   tasks/plan.md  tasks/todo.md
 ```
+
+### Mobile navigation: hamburger menu
+
+Phones get a **Menü** disclosure instead of the earlier horizontally-scrolling nav row.
+Mechanism: a real `<button type="button" aria-expanded aria-controls="site-nav">` plus ~20
+lines of inline JS at the end of each document. CSS keys off `[aria-expanded="true"]` and
+nothing else, so the button's announced state and the panel's visibility cannot drift apart.
+Not `<details>`/`<summary>`: a closed `<details>` cannot portably be forced open for the
+desktop layout without duplicating the nav markup.
+
+The script is the **only JavaScript on the site**. It handles: toggle, close on link tap
+(otherwise the panel covers the section it just scrolled to), Escape (closes and returns
+focus to the toggle), outside click, and resetting `aria-expanded` when the viewport crosses
+into the desktop layout.
+
+It is a progressive enhancement, not a dependency. A one-liner in `<head>` sets
+`html.js`; without it the `:root:not(.js)` block hides the toggle and renders the nav as a
+plain wrapping row — the pre-hamburger layout. The header grows a row or two, every link
+stays reachable, nothing overflows. Verified by removing the class at runtime.
+
+An earlier iteration was pure CSS (a `.visually-hidden` checkbox with the `<label>` as the
+control). It was replaced because a CSS-only menu cannot close itself on link tap, which
+reads as broken, and because a checkbox pretending to be a button has no
+expanded/collapsed state to announce.
+
+Why it was worth doing: the panel is absolutely positioned, so the sticky header is a
+**single row at every width** — 69px for A and B from 320px to 1920px, 77–93px for C, and
+identical whether the menu is open or closed. That replaced a header that was 125–198px tall
+on phones and eliminated the multi-tier `--header-h` guesswork entirely.
+
+Progressive trims keep it to one row on the narrowest phones: subtitle hidden below 34rem,
+logogram and tighter gaps below 26rem, icon-only Menü below 22rem (the label text becomes
+`.visually-hidden`, never `display: none`, so the control keeps its accessible name).
+
+Panel rows are **full-bleed**: the panel gives up its side padding and each `.nav__link`
+carries it instead, so the whole strip is the tap target rather than just the words. The link
+needs `display: flex` for this — a11y.css's shared touch-target rule makes it `inline-flex`,
+which only ever wrapped the text. In variant C that was also a visible bug: the hairline rule
+under each item ran only as far as the words did.
+
+The focus ring on those rows is inset (`outline-offset: calc(var(--a11y-focus-offset) * -1)`).
+The open panel is a scroll container (`overflow-y: auto` forces `overflow-x` to `auto` too),
+so an outset ring loses its left and right sides at the panel edges — measured, then
+confirmed by screenshot. No scrollbar appeared either way; outlines do not contribute to
+scrollable overflow.
+
+Verified in Chrome across 3 variants × 11 widths (320–1200px): header height identical open
+and closed, panel hidden/shown correctly, no horizontal overflow in any state, accessible
+name `Menü` intact at every trim step, each of the four close paths working, and the no-JS
+fallback reachable. Plus 168 row checks — every row fills the panel width, is hit-tested
+(`elementFromPoint`) at its left edge, its right edge and the panel's right edge, is ≥44px
+tall, and leaves no dead gap to its neighbour. 33 combinations, 0 problems.
+
+**Carry into Task 7:** the site now has a script, so the CSP and the "zero JS" claim in the
+performance notes both need updating for the chosen variant. The script is ~600 bytes inline
+— no extra request, no effect on LCP.
 
 ### Review chooser (added for the GitHub Pages share)
 

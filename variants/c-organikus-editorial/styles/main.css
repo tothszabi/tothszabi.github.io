@@ -9,15 +9,15 @@
   /* Measured height of the sticky header at each breakpoint. Both the sticky
      section rail and anchor-jump scroll padding derive from it, so nothing can
      come to rest underneath the header. Re-measure if the header changes. */
+  /* Single row at every width now that the mobile menu is an absolute panel.
+     Measured 77px up to 540px (trimmed brand), then 87-93px once the subtitle
+     returns; 93px covers the widest case with a few px to spare. */
   :root {
-    --header-h: 145px;   /* phones: brand + call button, then the nav row */
+    --header-h: 77px;
     --header-gap: 1.5rem;
   }
 
-  /* With the real (shorter) tagline the header now collapses to a single row
-     exactly at the 48rem nav breakpoint — measured 145px below, 92px at and
-     above. No intermediate tier is needed any more. */
-  @media (min-width: 48rem) {
+  @media (min-width: 34rem) {
     :root { --header-h: 93px; }
   }
 
@@ -123,7 +123,29 @@
      the header settles back to two rows. */
   @media (max-width: 47.99rem) {
     .site-header__inner { align-items: center; }
-    .brand__loc { display: none; }
+  }
+
+  /* Progressive trimming — see Variant A. */
+  @media (max-width: 34rem) {
+    .brand__role { display: none; }
+  }
+
+  @media (max-width: 26rem) {
+    .site-header__inner { gap: var(--s-2) var(--s-4); }
+    .nav-btn { padding-inline: 0.6rem; gap: var(--s-2); }
+  }
+
+  @media (max-width: 22rem) {
+    .nav-btn__label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .nav-btn { gap: 0; }
   }
 
   .brand {
@@ -170,24 +192,116 @@
     border-bottom-color: var(--c-amethyst);
   }
 
-  /* See Variant A for the rationale: keeps the sticky header to two rows on
-     phones without hiding the section nav. */
+  /* ---- Mobile menu (see Variant A for the mechanism and rationale) -----
+     Squared off and hairline-ruled to match this variant's editorial idiom. */
+  .nav-btn { display: none; }
+
+  /* No-JS fallback. The toggle cannot work without the script above, so rather
+     than a panel that never opens, show the nav as a plain wrapping row — the
+     pre-hamburger layout. Header grows a row or two; every link stays reachable. */
+  :root:not(.js) .nav-btn { display: none; }
+
+  :root:not(.js) .nav {
+    position: static;
+    display: block;
+    padding: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+  }
+
+  :root:not(.js) .nav__list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+
+  :root:not(.js) .nav__list li + li { border-top: 0; }
+
+  /* Rows are only full-bleed (and only ruled) inside the panel. */
+  :root:not(.js) .nav__link {
+    padding-inline: 0;
+    border-bottom-color: transparent;
+  }
+
   @media (max-width: 47.99rem) {
-    .nav {
-      order: 3;
-      flex: 1 1 100%;
-      overflow-x: auto;
-      overscroll-behavior-x: contain;
-      scrollbar-width: none;
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s-3);
+      min-height: 44px;
+      padding: 0.4rem 0.85rem;
+      background: transparent;
+      border: 1px solid var(--c-ink);
+      border-radius: var(--r-sm);
+      color: var(--c-ink);
+      font-family: var(--f-mono);
+      font-size: var(--t-xs);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      user-select: none;
     }
 
-    .nav::-webkit-scrollbar { display: none; }
 
-    .nav__list { flex-wrap: nowrap; }
+    .nav-btn__bars,
+    .nav-btn__bars::before,
+    .nav-btn__bars::after {
+      display: block;
+      width: 1rem;
+      height: 1px;
+      background: currentColor;
+      transition: transform 180ms ease, opacity 120ms ease;
+    }
 
-    .nav__link { white-space: nowrap; }
+    .nav-btn__bars { position: relative; }
 
-    .site-header__inner > .btn { order: 2; }
+    .nav-btn__bars::before,
+    .nav-btn__bars::after { content: ""; position: absolute; left: 0; }
+    .nav-btn__bars::before { top: -5px; }
+    .nav-btn__bars::after  { top: 5px; }
+
+    .nav-btn[aria-expanded="true"] .nav-btn__bars { background: transparent; }
+    .nav-btn[aria-expanded="true"] .nav-btn__bars::before { transform: translateY(5px) rotate(45deg); }
+    .nav-btn[aria-expanded="true"] .nav-btn__bars::after  { transform: translateY(-5px) rotate(-45deg); }
+
+    .nav {
+      position: absolute;
+      inset-inline: 0;
+      top: 100%;
+      display: none;
+      /* No side padding: the rows carry it instead, so each link's tap area and
+         its hairline rule reach both edges of the panel. */
+      padding: 0 0 var(--s-3);
+      background: var(--c-bg);
+      border-bottom: 1px solid var(--c-ink);
+    }
+
+    .nav-btn[aria-expanded="true"] + .nav {
+      display: block;
+      /* Never let the panel run past a short viewport. */
+      max-height: calc(100dvh - var(--header-h));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .nav__list { flex-direction: column; align-items: stretch; gap: 0; }
+
+    /* Full-bleed rows — see Variant A. Until the link filled its <li>, the
+       hairline rule only ran as far as the words did. */
+    .nav__link {
+      display: flex;
+      justify-content: flex-start;
+      padding: var(--s-3) var(--gutter);
+      font-size: var(--t-md);
+      border-bottom: 1px solid var(--c-line);
+    }
+
+    /* The panel is a scroll container, so an outset focus ring loses its left
+       and right sides at the panel's edges. Draw it inside the row instead. */
+    .nav__link:focus-visible { outline-offset: calc(var(--a11y-focus-offset) * -1); }
+
+    .nav__list li:last-child .nav__link { border-bottom: 0; }
   }
 
   /* ---- Labels: the editorial signature ---------------------------------- */

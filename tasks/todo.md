@@ -2,7 +2,7 @@
 
 Full detail, acceptance criteria, and verification steps live in [plan.md](plan.md).
 
-Stack: pure HTML + CSS, no deps, no build. Hungarian only. CTA = direct contact links.
+Stack: hand-written HTML + CSS, no deps, no build (one inline script for the mobile menu). Hungarian only. CTA = direct contact links.
 
 ---
 
