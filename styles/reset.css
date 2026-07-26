@@ -1,0 +1,96 @@
+/* ==========================================================================
+   reset.css — minimal modern reset
+   Shared by every design variant. Contains NO colour, font or spacing
+   decisions; those belong to each variant's tokens.css.
+   ========================================================================== */
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Media defaults: never overflow, always block-level. */
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Form controls should inherit typography rather than reset to the UA font. */
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  /* Long unbroken strings (URLs, e-mail addresses) must not blow out the layout. */
+  p,
+  li,
+  h1,
+  h2,
+  h3,
+  h4,
+  dt,
+  dd,
+  blockquote {
+    overflow-wrap: break-word;
+  }
+
+  /* Balanced headings, pretty body copy — progressive, ignored where unsupported. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+    line-height: 1.15;
+  }
+
+  p,
+  li {
+    text-wrap: pretty;
+  }
+
+  ul[class],
+  ol[class] {
+    list-style: none;
+    padding: 0;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  /* Smooth anchor scrolling, but only for users who want motion.
+     scroll-padding-top keeps section headings clear of a sticky header. */
+  @media (prefers-reduced-motion: no-preference) {
+    :root {
+      scroll-behavior: smooth;
+    }
+  }
+
+  :root {
+    scroll-padding-top: 5rem;
+  }
+}

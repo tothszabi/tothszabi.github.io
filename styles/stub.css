@@ -1,0 +1,99 @@
+/* ==========================================================================
+   stub.css — provisional legal pages (Impresszum, Adatkezelési tájékoztató).
+   Neutral styling on purpose: these are shared by all three design variants
+   during the review, so they must not favour any one look. Task 10 replaces
+   them with real content styled to match the chosen variant.
+   ========================================================================== */
+
+@layer base, components;
+
+@layer base {
+  :root {
+    --c-bg:        #f4f4f5;
+    --c-surface:   #ffffff;
+    --c-ink:       #1c1c1f;
+    --c-ink-soft:  #4b4b53;
+    --c-ink-faint: #66666f;
+    --c-line:      #dcdce0;
+    --c-warn-bg:   #fff8e6;
+    --c-warn-line: #d9a520;
+    --c-warn-ink:  #63470a;
+
+    --a11y-focus-color: #1c1c1f;
+  }
+
+  body {
+    background: var(--c-bg);
+    color: var(--c-ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+                 Arial, sans-serif;
+    line-height: 1.7;
+  }
+}
+
+@layer components {
+  .stub {
+    max-width: 40rem;
+    margin: clamp(2rem, 1rem + 4vw, 4rem) auto;
+    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    background: var(--c-surface);
+    border: 1px solid var(--c-line);
+    border-radius: 1rem;
+  }
+
+  .stub p + p { margin-top: 1rem; }
+
+  .stub__kicker {
+    margin-bottom: 0.5rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-ink-faint);
+  }
+
+  .stub__title {
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    font-size: clamp(1.625rem, 1.4rem + 1.1vw, 2.25rem);
+    margin-bottom: 1.5rem;
+  }
+
+  .stub__note {
+    padding: 1rem;
+    background: var(--c-warn-bg);
+    border: 1px solid var(--c-warn-line);
+    border-left: 4px solid var(--c-warn-line);
+    border-radius: 0.375rem;
+    color: var(--c-warn-ink);
+    font-size: 0.9375rem;
+  }
+
+  /* reset.css strips list-style from classed lists; restore it for prose. */
+  .stub__list {
+    display: grid;
+    gap: 0.5rem;
+    margin: 1rem 0 0;
+    padding-left: 1.25rem;
+    color: var(--c-ink-soft);
+    font-size: 0.9375rem;
+    list-style: disc;
+  }
+
+  .stub__disclaimer {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--c-line);
+    font-size: 0.8125rem;
+    color: var(--c-ink-faint);
+  }
+
+  .stub__link { color: var(--c-ink); }
+
+  .stub__back {
+    display: inline-block;
+    margin-top: 1.5rem;
+    color: var(--c-ink);
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+}

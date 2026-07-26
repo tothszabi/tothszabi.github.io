@@ -1,0 +1,25 @@
+{
+  "extends": ["html-validate:recommended", "html-validate:document", "html-validate:a11y"],
+  "rules": {
+    "require-sri": "off",
+    "no-inline-style": "off",
+    "tel-non-breaking": "off",
+    "long-title": ["error", { "maxlength": 70 }],
+    "attribute-boolean-style": ["error", { "style": "omit" }],
+    "prefer-native-element": "error",
+    "wcag/h30": "error",
+    "wcag/h32": "error",
+    "wcag/h36": "error",
+    "wcag/h37": "error",
+    "wcag/h63": "error",
+    "wcag/h67": "error",
+    "wcag/h71": "error",
+    "input-missing-label": "error",
+    "heading-level": "error",
+    "empty-heading": "error",
+    "unique-landmark": "error",
+    "no-redundant-role": "error",
+    "no-autoplay": "error",
+    "meta-refresh": "error"
+  }
+}

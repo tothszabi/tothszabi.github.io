@@ -1,0 +1,809 @@
+/* ==========================================================================
+   Variant C — "Organikus Editorial" · layout and components
+   ========================================================================== */
+
+@layer base, layout, components, utilities;
+
+/* ============================= BASE ====================================== */
+@layer base {
+  /* Measured height of the sticky header at each breakpoint. Both the sticky
+     section rail and anchor-jump scroll padding derive from it, so nothing can
+     come to rest underneath the header. Re-measure if the header changes. */
+  :root {
+    --header-h: 145px;   /* phones: brand + call button, then the nav row */
+    --header-gap: 1.5rem;
+  }
+
+  /* With the real (shorter) tagline the header now collapses to a single row
+     exactly at the 48rem nav breakpoint — measured 145px below, 92px at and
+     above. No intermediate tier is needed any more. */
+  @media (min-width: 48rem) {
+    :root { --header-h: 93px; }
+  }
+
+  /* Overrides reset.css's generic 5rem — that was less than the header height,
+     so clicking a nav link parked the target heading behind the header. */
+  :root {
+    scroll-padding-top: calc(var(--header-h) + var(--header-gap));
+  }
+
+  body {
+    background: var(--c-bg);
+    color: var(--c-ink);
+    font-family: var(--f-body);
+    font-size: var(--t-base);
+    line-height: 1.7;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--f-display);
+    font-weight: 600;
+    color: var(--c-ink);
+  }
+
+  a { text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+
+  ::selection { background: var(--c-amethyst); color: #fff; }
+}
+
+/* ============================ LAYOUT ===================================== */
+@layer layout {
+  .shell {
+    width: 100%;
+    max-width: var(--shell);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .section {
+    padding-block: var(--s-9);
+    border-top: 1px solid var(--c-line);
+  }
+
+  .section--tinted { background: var(--c-bg-tint); }
+
+  /* The asymmetric editorial grid: a narrow left rail carries the section
+     label, heading and intro; the wide right column carries the content.
+     Collapses to a single column below 60rem. */
+  .editorial { display: grid; gap: var(--s-6); }
+
+  @media (min-width: 60rem) {
+    .editorial {
+      grid-template-columns: minmax(15rem, 0.72fr) minmax(0, 1.28fr);
+      gap: clamp(2rem, 1rem + 4vw, 5rem);
+      align-items: start;
+    }
+
+    /* The rail tracks alongside long content. The offset must clear the header
+       (previously 5.5rem = 88px against a 93px header, so the label tucked
+       underneath it — the reported bug). */
+    .editorial__aside {
+      position: sticky;
+      top: calc(var(--header-h) + var(--header-gap));
+    }
+  }
+}
+
+/* =========================== COMPONENTS ================================== */
+@layer components {
+
+  .variant-flag {
+    margin: 0;
+    padding: var(--s-2) var(--gutter);
+    background: var(--c-ink);
+    color: var(--c-bg);
+    font-family: var(--f-mono);
+    font-size: var(--t-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* ---- Header: flat, no blur, single hairline ---------------------------- */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--c-bg);
+    border-bottom: 1px solid var(--c-ink);
+  }
+
+  .site-header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s-3) var(--s-6);
+    padding-block: var(--s-4);
+  }
+
+  /* On phones the full tagline makes .brand 270px wide, which leaves too little
+     room for the call button beside it — the button wrapped to its own row and
+     the sticky header grew to three rows (198px, half a phone viewport). The
+     location is restated in the hero label directly below, so drop it here and
+     the header settles back to two rows. */
+  @media (max-width: 47.99rem) {
+    .site-header__inner { align-items: center; }
+    .brand__loc { display: none; }
+  }
+
+  .brand {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    margin-right: auto;
+    text-decoration: none;
+  }
+
+  .brand__name {
+    font-family: var(--f-display);
+    font-size: var(--t-lg);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .brand__role {
+    font-family: var(--f-mono);
+    font-size: var(--t-xs);
+    letter-spacing: 0.04em;
+    color: var(--c-ink-faint);
+  }
+
+  .nav__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-1) var(--s-5);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .nav__link {
+    font-size: var(--t-sm);
+    color: var(--c-ink-soft);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 140ms ease, color 140ms ease;
+  }
+
+  .nav__link:hover {
+    color: var(--c-ink);
+    border-bottom-color: var(--c-amethyst);
+  }
+
+  /* See Variant A for the rationale: keeps the sticky header to two rows on
+     phones without hiding the section nav. */
+  @media (max-width: 47.99rem) {
+    .nav {
+      order: 3;
+      flex: 1 1 100%;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+    }
+
+    .nav::-webkit-scrollbar { display: none; }
+
+    .nav__list { flex-wrap: nowrap; }
+
+    .nav__link { white-space: nowrap; }
+
+    .site-header__inner > .btn { order: 2; }
+  }
+
+  /* ---- Labels: the editorial signature ---------------------------------- */
+  .label {
+    margin-bottom: var(--s-4);
+    font-family: var(--f-mono);
+    font-size: var(--t-xs);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--c-amethyst);
+  }
+
+  /* ---- Buttons: square, understated ------------------------------------- */
+  .btn {
+    --btn-py: 0.8125rem;
+    --btn-px: 1.5rem;
+    padding: var(--btn-py) var(--btn-px);
+    border-radius: var(--r-sm);
+    font-size: var(--t-sm);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    text-align: center;
+    white-space: nowrap;
+    transition: background-color 140ms ease, color 140ms ease,
+                border-color 140ms ease;
+  }
+
+  .btn--solid {
+    background: var(--c-ink);
+    color: var(--c-bg);
+    border: 1px solid var(--c-ink);
+  }
+
+  .btn--solid:hover { background: var(--c-amethyst-dp); border-color: var(--c-amethyst-dp); }
+
+  .btn--ghost {
+    background: transparent;
+    color: var(--c-ink);
+    border: 1px solid var(--c-line-strong);
+  }
+
+  .btn--ghost:hover { border-color: var(--c-ink); background: var(--c-surface); }
+
+  /* Text button — no box, just a rule under it. */
+  .btn--text {
+    padding-inline: 0;
+    background: none;
+    border: 0;
+    border-bottom: 1px solid var(--c-line-strong);
+    border-radius: 0;
+    color: var(--c-ink);
+  }
+
+  .btn--text:hover { border-bottom-color: var(--c-amethyst); color: var(--c-amethyst-dp); }
+
+  .btn--sm { --btn-py: 0.5rem; --btn-px: 1rem; }
+  .btn--lg { --btn-py: 1rem; --btn-px: 2rem; font-size: var(--t-md); }
+
+  .link { color: var(--c-amethyst-dp); text-decoration: underline; }
+  .link:hover { color: var(--c-clay); }
+
+  /* ---- Hero: oversized masthead ---------------------------------------- */
+  .hero { padding-block: clamp(2.5rem, 1.5rem + 5vw, 5rem) var(--s-9); }
+
+  .hero__grid { display: grid; gap: var(--s-6); }
+
+  @media (min-width: 60rem) {
+    .hero__grid {
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: clamp(2rem, 1rem + 4vw, 5rem);
+      align-items: end;
+      padding-bottom: var(--s-7);
+    }
+  }
+
+  .hero__title {
+    font-size: var(--t-3xl);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    margin: 0;
+  }
+
+  .hero__rail {
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--c-ink);
+  }
+
+  .hero__lead {
+    font-size: var(--t-md);
+    color: var(--c-ink-soft);
+    margin-bottom: var(--s-5);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-4);
+  }
+
+  /* ---- Facts strip ------------------------------------------------------ */
+  .facts {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    border-top: 1px solid var(--c-line);
+  }
+
+  @media (min-width: 40rem) { .facts { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 64rem) { .facts { grid-template-columns: repeat(4, 1fr); } }
+
+  .facts__item {
+    padding: var(--s-4) 0;
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  @media (min-width: 40rem) {
+    .facts__item { padding-inline: var(--s-5); border-left: 1px solid var(--c-line); }
+    .facts__item:first-child { padding-left: 0; border-left: 0; }
+  }
+
+  .facts__key {
+    font-family: var(--f-mono);
+    font-size: var(--t-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--c-ink-faint);
+    margin-bottom: var(--s-1);
+  }
+
+  .facts__val {
+    margin: 0;
+    font-family: var(--f-display);
+    font-size: var(--t-lg);
+  }
+
+  /* ---- Photo placeholders: square, flat, tape-like label --------------- */
+  .photo {
+    display: grid;
+    place-items: center;
+    border-radius: var(--r-sm);
+    background:
+      repeating-linear-gradient(
+        45deg,
+        var(--c-bg-tint) 0 10px,
+        #eae4da 10px 20px
+      );
+    border: 1px solid var(--c-line-strong);
+  }
+
+  .photo--wide { aspect-ratio: 16 / 9; margin-bottom: var(--s-7); }
+  .photo--portrait { aspect-ratio: 3 / 4; margin-top: var(--s-5); }
+
+  .photo__label {
+    padding: var(--s-2) var(--s-4);
+    background: var(--c-surface);
+    border: 1px solid var(--c-line-strong);
+    font-family: var(--f-mono);
+    font-size: var(--t-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.9;
+    color: var(--c-ink-faint);
+  }
+
+  /* ---- Section text --------------------------------------------------- */
+  .section__title {
+    font-size: var(--t-2xl);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--s-4);
+  }
+
+  .section__intro { font-size: var(--t-sm); color: var(--c-ink-soft); }
+
+  .lead {
+    font-size: var(--t-lg);
+    line-height: 1.55;
+    color: var(--c-ink);
+  }
+
+  .editorial__body p + p { margin-top: var(--s-4); }
+  .editorial__body p { color: var(--c-ink-soft); }
+  .editorial__body .lead { color: var(--c-ink); }
+
+  .section__note {
+    max-width: 44rem;
+    margin-top: var(--s-7);
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--c-line);
+    font-size: var(--t-sm);
+    color: var(--c-ink-faint);
+  }
+
+  .pull-quote {
+    margin: var(--s-7) 0 0;
+    padding: var(--s-5) 0;
+    border-top: 2px solid var(--c-ink);
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  .pull-quote blockquote {
+    margin: 0;
+    font-family: var(--f-display);
+    font-size: var(--t-xl);
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+    color: var(--c-ink);
+  }
+
+  .pull-quote__by {
+    margin-top: var(--s-3);
+    font-family: var(--f-mono);
+    font-size: var(--t-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--c-ink-faint);
+  }
+
+  /* Credit for the method's originator — sits in the editorial rail. */
+  .credit {
+    margin-top: var(--s-4);
+    padding-top: var(--s-3);
+    border-top: 1px solid var(--c-line);
+    font-size: var(--t-xs);
+    color: var(--c-ink-faint);
+  }
+
+  /* ---- Roles (csakraállítás is group work with defined roles) ---------- */
+  .roles { margin-top: var(--s-7); }
+
+  .roles__title {
+    font-size: var(--t-lg);
+    margin-bottom: var(--s-4);
+    padding-top: var(--s-4);
+    border-top: 2px solid var(--c-ink);
+  }
+
+  .roles__list { margin: 0; }
+
+  .roles__item {
+    display: grid;
+    gap: 0.15rem;
+    padding-block: var(--s-3);
+    border-top: 1px solid var(--c-line);
+  }
+
+  .roles__item:first-of-type { border-top: 0; }
+
+  @media (min-width: 34rem) {
+    .roles__item {
+      grid-template-columns: 11rem 1fr;
+      gap: var(--s-4);
+      align-items: baseline;
+    }
+  }
+
+  .roles__term {
+    font-family: var(--f-mono);
+    font-size: var(--t-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-amethyst-dp);
+  }
+
+  .roles__def {
+    margin: 0;
+    font-size: var(--t-sm);
+    color: var(--c-ink-soft);
+  }
+
+  /* ---- Signature ------------------------------------------------------ */
+  .signature {
+    margin-top: var(--s-5);
+    font-family: var(--f-display);
+    font-size: var(--t-lg);
+    color: var(--c-ink);
+  }
+
+  /* ---- Numbered rows --------------------------------------------------- */
+  .rows { list-style: none; padding: 0; margin: 0; }
+
+  .row {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: var(--s-4);
+    padding-block: var(--s-5);
+    border-top: 1px solid var(--c-line);
+  }
+
+  .row:last-child { border-bottom: 1px solid var(--c-line); }
+
+  @media (min-width: 40rem) {
+    .row { grid-template-columns: 5rem 1fr; gap: var(--s-6); }
+  }
+
+  /* Outlined numeral — editorial, not a filled badge. */
+  .row__num {
+    font-family: var(--f-display);
+    font-size: var(--t-xl);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--c-amethyst);
+    text-stroke: 1px var(--c-amethyst);
+  }
+
+  /* text-stroke is unsupported in some engines and in forced-colors —
+     fall back to a plain filled numeral rather than invisible text. */
+  @supports not (-webkit-text-stroke: 1px red) {
+    .row__num { color: var(--c-amethyst); }
+  }
+
+  @media (forced-colors: active) {
+    .row__num { color: CanvasText; -webkit-text-stroke: 0; }
+  }
+
+  .row__title {
+    font-size: var(--t-lg);
+    margin-bottom: var(--s-2);
+  }
+
+  .row__text { font-size: var(--t-sm); color: var(--c-ink-soft); }
+
+  /* ---- Check list: hairline rows, no cards ---------------------------- */
+  .checks { list-style: none; padding: 0; margin: 0; }
+
+  .checks__item {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-4);
+    padding-block: var(--s-4);
+    border-top: 1px solid var(--c-line);
+    font-size: var(--t-md);
+    color: var(--c-ink-soft);
+  }
+
+  .checks__item:last-child { border-bottom: 1px solid var(--c-line); }
+
+  .checks__item::before {
+    content: "—";
+    flex: none;
+    color: var(--c-clay);
+    font-weight: 600;
+  }
+
+  .callout {
+    max-width: 44rem;
+    margin-top: var(--s-7);
+    padding: var(--s-5);
+    background: var(--c-surface);
+    border: 1px solid var(--c-line-strong);
+    border-left: 3px solid var(--c-amethyst);
+    border-radius: var(--r-sm);
+    font-size: var(--t-sm);
+    color: var(--c-ink-soft);
+  }
+
+  /* ---- About ---------------------------------------------------------- */
+  .about__subtitle {
+    font-size: var(--t-lg);
+    margin: var(--s-6) 0 var(--s-4);
+    padding-top: var(--s-4);
+    border-top: 2px solid var(--c-ink);
+  }
+
+  .creds { list-style: none; padding: 0; margin: 0; }
+
+  .creds__item {
+    padding-block: var(--s-3);
+    border-top: 1px solid var(--c-line);
+    font-size: var(--t-sm);
+    color: var(--c-ink-soft);
+  }
+
+  .creds__item:first-child { border-top: 0; }
+  .creds__item strong { color: var(--c-ink); font-weight: 600; }
+
+  .creds__note {
+    margin-top: var(--s-5);
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--c-line);
+    font-size: var(--t-sm);
+    color: var(--c-ink-faint);
+  }
+
+  /* ---- Placeholder warning -------------------------------------------- */
+  .placeholder-warning {
+    margin-bottom: var(--s-6);
+    padding: var(--s-4);
+    background: var(--c-warn-bg);
+    border: 1px solid var(--c-warn-line);
+    border-left: 3px solid var(--c-warn-line);
+    border-radius: var(--r-sm);
+    color: var(--c-warn-ink);
+    font-size: var(--t-sm);
+  }
+
+  /* ---- Quotes: stacked rows on rules ---------------------------------- */
+  .quotes { list-style: none; padding: 0; margin: 0; }
+
+  .quote {
+    margin: 0;
+    padding-block: var(--s-5);
+    border-top: 1px solid var(--c-line);
+  }
+
+  .quotes li:last-child .quote { border-bottom: 1px solid var(--c-line); }
+
+  .quote__tag {
+    display: inline-block;
+    margin-bottom: var(--s-3);
+    padding: 0.1rem 0.5rem;
+    background: var(--c-warn-bg);
+    border: 1px solid var(--c-warn-line);
+    border-radius: var(--r-sm);
+    font-family: var(--f-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-warn-ink);
+  }
+
+  .quote__text {
+    margin: 0 0 var(--s-3);
+    font-family: var(--f-display);
+    font-size: var(--t-lg);
+    line-height: 1.45;
+    color: var(--c-ink);
+  }
+
+  .quote__by {
+    font-family: var(--f-mono);
+    font-size: var(--t-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-ink-faint);
+  }
+
+  /* ---- Price rows ------------------------------------------------------ */
+  .price-rows { list-style: none; padding: 0; margin: 0 0 var(--s-6); }
+
+  .price-row {
+    padding-block: var(--s-5);
+    border-top: 2px solid var(--c-ink);
+  }
+
+  .price-row:last-child { border-bottom: 1px solid var(--c-line); }
+
+  .price-row__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3);
+  }
+
+  .price-row__name {
+    font-size: var(--t-xl);
+    letter-spacing: -0.015em;
+  }
+
+  .price-row__amount {
+    margin: 0;
+    font-family: var(--f-display);
+    font-size: var(--t-xl);
+    color: var(--c-amethyst-dp);
+  }
+
+  .price-row__meta {
+    margin-block: var(--s-1) var(--s-3);
+    font-family: var(--f-mono);
+    font-size: var(--t-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--c-ink-faint);
+  }
+
+  .price-row__text { font-size: var(--t-sm); color: var(--c-ink-soft); }
+
+  .booking__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    margin-bottom: var(--s-4);
+  }
+
+  .booking__place { font-size: var(--t-sm); color: var(--c-ink-faint); }
+
+  /* ---- FAQ: hairline rows with a plus/minus indicator ----------------- */
+  .faq { border-top: 1px solid var(--c-line); }
+
+  .faq__item { border-bottom: 1px solid var(--c-line); }
+
+  .faq__q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    min-height: 44px;
+    padding-block: var(--s-4);
+    cursor: pointer;
+    font-family: var(--f-display);
+    font-size: var(--t-md);
+    font-weight: 600;
+    list-style: none;
+  }
+
+  .faq__q::-webkit-details-marker { display: none; }
+
+  /* Plus that becomes a minus — two pseudo-element bars, no icon asset. */
+  .faq__q::after {
+    content: "";
+    flex: none;
+    width: 0.875rem;
+    height: 0.875rem;
+    background:
+      linear-gradient(var(--c-amethyst), var(--c-amethyst)) center / 100% 1px no-repeat,
+      linear-gradient(var(--c-amethyst), var(--c-amethyst)) center / 1px 100% no-repeat;
+    transition: rotate 200ms ease;
+  }
+
+  .faq__item[open] .faq__q::after {
+    background:
+      linear-gradient(var(--c-amethyst), var(--c-amethyst)) center / 100% 1px no-repeat;
+    rotate: 180deg;
+  }
+
+  .faq__q:hover { color: var(--c-amethyst-dp); }
+
+  .faq__a {
+    padding-bottom: var(--s-5);
+    max-width: 44rem;
+    font-size: var(--t-sm);
+    color: var(--c-ink-soft);
+  }
+
+  /* ---- Final CTA ------------------------------------------------------ */
+  .final {
+    padding-block: var(--s-9);
+    background: var(--c-ink);
+    color: var(--c-bg);
+  }
+
+  .final .label { color: #d9c2ea; }   /* 9.1:1 on --c-ink */
+
+  .final__inner { max-width: 44rem; }
+
+  .final__title {
+    font-size: var(--t-2xl);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--c-bg);
+    margin-bottom: var(--s-4);
+  }
+
+  .final__text {
+    font-size: var(--t-md);
+    color: #ded8cf;                    /* 10.5:1 on --c-ink */
+    margin-bottom: var(--s-6);
+  }
+
+  .final .btn--solid {
+    background: var(--c-bg);
+    color: var(--c-ink);
+    border-color: var(--c-bg);
+  }
+
+  .final .btn--solid:hover { background: #d9c2ea; border-color: #d9c2ea; color: var(--c-ink); }
+
+  /* ---- Footer --------------------------------------------------------- */
+  .site-footer { padding-block: var(--s-8) var(--s-6); }
+
+  .site-footer__inner {
+    display: grid;
+    gap: var(--s-6);
+    padding-bottom: var(--s-6);
+  }
+
+  @media (min-width: 40rem) { .site-footer__inner { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 62rem) { .site-footer__inner { grid-template-columns: 1.4fr 1fr 1fr 1fr; } }
+
+  .site-footer__brand {
+    font-family: var(--f-display);
+    font-size: var(--t-lg);
+    margin-bottom: var(--s-2);
+  }
+
+  .site-footer__muted { font-size: var(--t-sm); color: var(--c-ink-faint); }
+
+  .site-footer__title {
+    font-family: var(--f-mono);
+    font-size: var(--t-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-ink-faint);
+    margin-bottom: var(--s-3);
+  }
+
+  .site-footer__list { display: grid; gap: var(--s-2); }
+
+  .site-footer__col p { font-size: var(--t-sm); }
+  .site-footer__col p + p { margin-top: var(--s-2); }
+
+  .disclaimer {
+    padding-top: var(--s-5);
+    border-top: 1px solid var(--c-line-strong);
+    font-size: var(--t-xs);
+    line-height: 1.8;
+    color: var(--c-ink-faint);
+  }
+
+  .copyright {
+    margin-top: var(--s-4);
+    font-size: var(--t-xs);
+    color: var(--c-ink-faint);
+  }
+}

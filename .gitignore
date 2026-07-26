@@ -1,0 +1,14 @@
+# Audit output
+reports/
+
+# npx / tooling scratch
+node_modules/
+.npm/
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp

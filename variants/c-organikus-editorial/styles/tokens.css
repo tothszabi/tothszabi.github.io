@@ -1,0 +1,80 @@
+/* ==========================================================================
+   Variant C — "Organikus Editorial"
+   Deliberately avoids the spiritual visual cliché. Warm neutrals (sand, clay,
+   sage) with amethyst as a single restrained accent. Sharp corners, hairline
+   rules, oversized editorial type, asymmetric grid.
+
+   Measured contrast on --c-bg #f7f4ef (all clear AA for body text):
+     --c-ink       #2b2723  → 13.5:1
+     --c-ink-soft  #554e45  →  7.5:1
+     --c-ink-faint #6b6459  →  5.3:1 · 5.0:1 on --c-bg-tint
+     --c-amethyst  #7a4fa3  →  5.5:1
+     --c-clay      #9c4a32  →  5.6:1
+   On the dark --c-ink final-CTA band:
+     #d9c2ea label          →  9.1:1
+     #ded8cf body           → 10.5:1
+   ========================================================================== */
+
+@layer tokens {
+  :root {
+    /* ---- Colour -------------------------------------------------------- */
+    --c-bg:          #f7f4ef;   /* sand */
+    --c-bg-tint:     #f0ece4;
+    --c-surface:     #fffdfa;
+
+    --c-ink:         #2b2723;
+    --c-ink-soft:    #554e45;
+    --c-ink-faint:   #6b6459;
+
+    --c-amethyst:    #7a4fa3;   /* the ONLY purple — accent, ≤10% of weight */
+    --c-amethyst-dp: #603b83;
+    --c-clay:        #9c4a32;
+    --c-sage:        #5c6b50;
+
+    --c-line:        #ded7cc;
+    --c-line-strong: #bfb5a5;
+
+    --c-warn-bg:     #fdf3dc;
+    --c-warn-line:   #c9922a;
+    --c-warn-ink:    #6b4a08;   /* 7.3:1 on --c-warn-bg */
+
+    --a11y-focus-color: var(--c-amethyst-dp);
+
+    /* ---- Type ---------------------------------------------------------- */
+    --f-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+                 "Times New Roman", serif;
+    --f-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+              Arial, sans-serif;
+    --f-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+    --t-xs:   0.75rem;
+    --t-sm:   0.875rem;
+    --t-base: clamp(0.9375rem, 0.91rem + 0.16vw, 1rem);
+    --t-md:   clamp(1rem, 0.95rem + 0.31vw, 1.125rem);
+    --t-lg:   clamp(1.125rem, 1.03rem + 0.47vw, 1.3125rem);
+    --t-xl:   clamp(1.375rem, 1.2rem + 0.9vw, 1.875rem);
+    --t-2xl:  clamp(1.75rem, 1.4rem + 1.8vw, 2.875rem);
+    /* Editorial masthead — deliberately larger than the other variants, but
+       capped so the full keyword-bearing H1 stays a readable 3–4 lines. */
+    --t-3xl:  clamp(2.25rem, 1.4rem + 4.2vw, 4.25rem);
+
+    /* ---- Space --------------------------------------------------------- */
+    --s-1: 0.25rem;
+    --s-2: 0.5rem;
+    --s-3: 0.75rem;
+    --s-4: 1rem;
+    --s-5: 1.5rem;
+    --s-6: 2rem;
+    --s-7: 3rem;
+    --s-8: 4rem;
+    --s-9: clamp(4rem, 3rem + 5vw, 7rem);
+
+    --shell:  76rem;
+    --gutter: clamp(1.25rem, 0.8rem + 2.2vw, 3rem);
+
+    /* ---- Shape: sharp, editorial. Almost no radius anywhere. ----------- */
+    --r-sm: 2px;
+    --r-md: 3px;
+    --r-pill: 999px;
+  }
+}

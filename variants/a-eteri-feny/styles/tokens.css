@@ -1,0 +1,81 @@
+/* ==========================================================================
+   Variant A — "Éteri Fény"
+   Light, luminous, soft. Lavender tints and wide radial glows on warm white.
+   Serif display + humanist sans. Rounded, gentle, premium wellness.
+   ========================================================================== */
+
+@layer tokens {
+  :root {
+    /* ---- Colour -------------------------------------------------------- */
+    --c-bg:            #fdfcff;
+    --c-bg-tint:       #f6f2fb;
+    --c-surface:       #ffffff;
+    --c-surface-soft:  #faf7fd;
+
+    /* Ratios below are measured, not estimated. */
+    --c-ink:           #2a2438;  /* 14.6:1 on --c-bg */
+    --c-ink-soft:      #574d6b;  /*  7.7:1 on --c-bg */
+    --c-ink-faint:     #6f6584;  /*  5.3:1 on --c-bg · 4.9:1 on --c-bg-tint */
+
+    --c-primary:       #6b4e9e;  /*  6.4:1 on --c-bg — safe for body text */
+    --c-primary-deep:  #543c80;
+    --c-primary-tint:  #e9e3f5;
+    --c-primary-wash:  #f3eff9;
+
+    --c-accent:        #b0698f;  /* dusty rose, for glows and small accents */
+    --c-line:          #e6dff0;
+    --c-line-strong:   #d3c8e6;
+
+    --c-warn-bg:       #fff8e6;
+    --c-warn-line:     #e0b84a;
+    --c-warn-ink:      #6b4e0a;  /* 7.3:1 on --c-warn-bg */
+
+    /* Focus ring inherits from a11y.css; re-theme only the colour. */
+    --a11y-focus-color: var(--c-primary-deep);
+
+    /* ---- Type ---------------------------------------------------------- */
+    --f-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+                 "Times New Roman", serif;
+    --f-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+              Arial, sans-serif;
+
+    /* Fluid scale, 320px → 1280px viewport */
+    --t-xs:   0.8125rem;
+    --t-sm:   0.9375rem;
+    --t-base: clamp(1rem, 0.97rem + 0.16vw, 1.0625rem);
+    --t-md:   clamp(1.0625rem, 1rem + 0.31vw, 1.1875rem);
+    --t-lg:   clamp(1.1875rem, 1.09rem + 0.47vw, 1.375rem);
+    --t-xl:   clamp(1.5rem, 1.3rem + 1vw, 2rem);
+    --t-2xl:  clamp(1.875rem, 1.55rem + 1.6vw, 2.75rem);
+    --t-3xl:  clamp(2.25rem, 1.7rem + 2.7vw, 3.75rem);
+
+    /* ---- Space --------------------------------------------------------- */
+    --s-1: 0.25rem;
+    --s-2: 0.5rem;
+    --s-3: 0.75rem;
+    --s-4: 1rem;
+    --s-5: 1.5rem;
+    --s-6: 2rem;
+    --s-7: 3rem;
+    --s-8: 4rem;
+    --s-9: clamp(4rem, 3rem + 5vw, 7rem);
+
+    --shell:  70rem;
+    --narrow: 44rem;
+    --gutter: clamp(1.25rem, 0.9rem + 1.8vw, 2.5rem);
+
+    /* ---- Shape --------------------------------------------------------- */
+    --r-sm:  0.5rem;
+    --r-md:  1rem;
+    --r-lg:  1.5rem;
+    --r-xl:  2rem;
+    --r-pill: 999px;
+
+    --shadow-sm: 0 1px 2px rgb(42 36 56 / 0.04),
+                 0 4px 12px rgb(42 36 56 / 0.04);
+    --shadow-md: 0 2px 4px rgb(42 36 56 / 0.04),
+                 0 12px 32px rgb(84 60 128 / 0.08);
+    --shadow-lg: 0 4px 8px rgb(42 36 56 / 0.04),
+                 0 24px 56px rgb(84 60 128 / 0.11);
+  }
+}
